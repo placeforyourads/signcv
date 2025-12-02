@@ -51,8 +51,8 @@ def identify_sign(finger_pos, extra_char):
         fgp0 = finger_pos[0]
     except Exception:
         fgp0 = None
-    #pos_thumb = ident_thumb_pos(fgp0, extra_char)
-    print(ident_inx_fng_pos(fgp0, extra_char))
+    hand_pos = ident_hand_pos(fgp0, extra_char)
+    pos_thumb = ident_thumb_pos(fgp0, extra_char)
     pos_inx = ident_inx_fng_pos(fgp0, extra_char)
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
@@ -156,7 +156,21 @@ def ident_lil_fng_pos(finger_pos, extra_char):
         return "NONE"
 
 def ident_hand_pos(finger_pos, extra_char):
-    pass
+    if finger_pos is not None:
+        arm = "Left" if "Left" in str(extra_char[0]) else "Right"
+        if arm == "Left" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 50:
+            side = 'Closed'
+        elif arm == "Left":
+            side = "Opened"
+        if arm == "Right" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 50:
+            side = 'Opened'
+        elif arm == "Right":
+            side = "Closed"
+
+        if abs(finger_pos.landmark[5].x-finger_pos.landmark[17].x)*WIDTH <= 50:
+            side = "Sided"
+        try:print(side)
+        except Exception:side='Unfedined'
 
 
 while cap.isOpened():
@@ -170,7 +184,7 @@ while cap.isOpened():
         mpdr.draw_landmarks(flippedRGB, results.multi_hand_landmarks[0], mph.HAND_CONNECTIONS)
         try:mpdr.draw_landmarks(flippedRGB, results.multi_hand_landmarks[1], mph.HAND_CONNECTIONS)
         except Exception:pass
-    sign = identify_sign(results.multi_hand_landmarks, None)
+    sign = identify_sign(results.multi_hand_landmarks, results.multi_handedness)
     res_image = cv2.cvtColor(flippedRGB, cv2.COLOR_RGB2BGR)
     cv2.imshow("Hands", res_image)
 hands.close()
