@@ -170,8 +170,10 @@ def ident_hand_pos(finger_pos, extra_char):
 
         if abs(finger_pos.landmark[5].x-finger_pos.landmark[17].x)*WIDTH <= 50:
             side = "Sided"
-        try:print(side)
-        except Exception:side='Unfedined'
+    try:
+        return side
+    except Exception:
+        return 'Undefined'
 
 
 while cap.isOpened():
