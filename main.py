@@ -58,6 +58,8 @@ def identify_sign(finger_pos, extra_char):
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
     pos_lil = ident_lil_fng_pos(fgp0, extra_char)
+    print(hand_pos)
+    #print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
 
 
 
@@ -78,9 +80,11 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         pos8x = finger_pos.landmark[8].x * WIDTH
         pos8y = finger_pos.landmark[8].y * HEIGHT
         pos8z = finger_pos.landmark[8].z * 1000
-        if pos5y < pos6y < pos7y <pos8y:
+        #print(pos5y, pos6y, pos7y, pos8y)
+        #f pos5y < pos6y < pos7y <pos8y:
+        if pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
             return "DOWN"
-        elif pos8y < pos7y < pos6y < pos5y:
+        elif pos7y - pos8y >= 10 and pos6y - pos7y >= 10 and pos5y - pos6y >= 10:
             return 'UP'
         else:
             return 'NONE'
@@ -101,9 +105,9 @@ def ident_mid_fng_pos(finger_pos, extra_char):
         pos12x = finger_pos.landmark[12].x * WIDTH
         pos12y = finger_pos.landmark[12].y * HEIGHT
         pos12z = finger_pos.landmark[12].z * 1000
-        if pos9y < pos10y < pos11y < pos12y:
+        if pos10y - pos9y >= 10 and pos11y - pos10y >= 10 and pos12y - pos11y >= 10:
             return "DOWN"
-        elif pos9y < pos10y < pos11y < pos12y:
+        elif pos11y - pos12y >= 10 and pos10y - pos11y >= 10 and pos9y - pos10y >= 10:
             return 'UP'
         else:
             return 'NONE'
@@ -124,9 +128,9 @@ def ident_ring_fng_pos(finger_pos, extra_char):
         pos16x = finger_pos.landmark[16].x * WIDTH
         pos16y = finger_pos.landmark[16].y * HEIGHT
         pos16z = finger_pos.landmark[16].z * 1000
-        if pos13y < pos14y < pos15y < pos16y:
+        if pos14y - pos13y >= 10 and pos15y - pos14y >= 10 and pos16y - pos15y >= 10:
             return "DOWN"
-        elif pos13y < pos14y < pos15y < pos16y:
+        elif pos15y - pos16y >= 10 and pos14y - pos15y >= 10 and pos13y - pos14y >= 10:
             return 'UP'
         else:
             return 'NONE'
@@ -147,9 +151,9 @@ def ident_lil_fng_pos(finger_pos, extra_char):
         pos20x = finger_pos.landmark[20].x * WIDTH
         pos20y = finger_pos.landmark[20].y * HEIGHT
         pos20z = finger_pos.landmark[20].z * 1000
-        if pos17y < pos18y < pos19y < pos20y:
+        if pos18y - pos17y >= 7 and pos19y - pos18y >= 7 and pos20y - pos19y >= 7:
             return "DOWN"
-        elif pos17y < pos18y < pos19y < pos20y:
+        elif pos19y - pos20y >= 7 and pos18y - pos19y >= 7 and pos17y - pos18y >= 7:
             return 'UP'
         else:
             return 'NONE'
@@ -159,17 +163,18 @@ def ident_lil_fng_pos(finger_pos, extra_char):
 def ident_hand_pos(finger_pos, extra_char):
     if finger_pos is not None:
         arm = "Left" if "Left" in str(extra_char[0]) else "Right"
-        if arm == "Left" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 50:
+        if arm == "Left" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 36:
             side = 'Closed'
         elif arm == "Left":
             side = "Opened"
-        if arm == "Right" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 50:
+        if arm == "Right" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 36:
             side = 'Opened'
         elif arm == "Right":
             side = "Closed"
 
-        if abs(finger_pos.landmark[5].x-finger_pos.landmark[17].x)*WIDTH <= 50:
+        if abs(finger_pos.landmark[5].x-finger_pos.landmark[17].x)*WIDTH <= 36:
             side = "Sided"
+        print(finger_pos.landmark[5].x*WIDTH,finger_pos.landmark[17].z*1000, finger_pos.landmark[17].x*WIDTH, finger_pos.landmark[17].z*1000)
     try:
         return side
     except Exception:
