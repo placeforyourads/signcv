@@ -58,8 +58,9 @@ def identify_sign(finger_pos, extra_char):
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
     pos_lil = ident_lil_fng_pos(fgp0, extra_char)
-    print(hand_pos)
-    #print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
+    #print(hand_pos)
+    print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
+    #print(pos_inx)
 
 
 
@@ -80,8 +81,8 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         pos8x = finger_pos.landmark[8].x * WIDTH
         pos8y = finger_pos.landmark[8].y * HEIGHT
         pos8z = finger_pos.landmark[8].z * 1000
-        #print(pos5y, pos6y, pos7y, pos8y)
-        #f pos5y < pos6y < pos7y <pos8y:
+        if pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
+            return 'FISTED'
         if pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
             return "DOWN"
         elif pos7y - pos8y >= 10 and pos6y - pos7y >= 10 and pos5y - pos6y >= 10:
@@ -105,6 +106,9 @@ def ident_mid_fng_pos(finger_pos, extra_char):
         pos12x = finger_pos.landmark[12].x * WIDTH
         pos12y = finger_pos.landmark[12].y * HEIGHT
         pos12z = finger_pos.landmark[12].z * 1000
+        print(pos9y, pos10y, pos11y, pos12y)
+        if pos9y - pos10y >= 3 and pos11y - pos10y >= 10 and abs(pos11y - pos12y) >= 0.25:
+            return 'FISTED'
         if pos10y - pos9y >= 10 and pos11y - pos10y >= 10 and pos12y - pos11y >= 10:
             return "DOWN"
         elif pos11y - pos12y >= 10 and pos10y - pos11y >= 10 and pos9y - pos10y >= 10:
@@ -128,6 +132,8 @@ def ident_ring_fng_pos(finger_pos, extra_char):
         pos16x = finger_pos.landmark[16].x * WIDTH
         pos16y = finger_pos.landmark[16].y * HEIGHT
         pos16z = finger_pos.landmark[16].z * 1000
+        if pos13y - pos14y >= 3 and pos15y - pos14y >= 10 and abs(pos15y - pos16y) >= 0.25:
+            return 'FISTED'
         if pos14y - pos13y >= 10 and pos15y - pos14y >= 10 and pos16y - pos15y >= 10:
             return "DOWN"
         elif pos15y - pos16y >= 10 and pos14y - pos15y >= 10 and pos13y - pos14y >= 10:
@@ -151,6 +157,8 @@ def ident_lil_fng_pos(finger_pos, extra_char):
         pos20x = finger_pos.landmark[20].x * WIDTH
         pos20y = finger_pos.landmark[20].y * HEIGHT
         pos20z = finger_pos.landmark[20].z * 1000
+        if pos17y - pos18y >= 2.5 and pos19y - pos18y >= 7 and abs(pos19y - pos20y) >= 0.25/10*7:
+            return 'FISTED'
         if pos18y - pos17y >= 7 and pos19y - pos18y >= 7 and pos20y - pos19y >= 7:
             return "DOWN"
         elif pos19y - pos20y >= 7 and pos18y - pos19y >= 7 and pos17y - pos18y >= 7:
@@ -174,7 +182,6 @@ def ident_hand_pos(finger_pos, extra_char):
 
         if abs(finger_pos.landmark[5].x-finger_pos.landmark[17].x)*WIDTH <= 36:
             side = "Sided"
-        print(finger_pos.landmark[5].x*WIDTH,finger_pos.landmark[17].z*1000, finger_pos.landmark[17].x*WIDTH, finger_pos.landmark[17].z*1000)
     try:
         return side
     except Exception:
