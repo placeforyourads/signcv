@@ -58,10 +58,15 @@ def identify_sign(finger_pos, extra_char):
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
     pos_lil = ident_lil_fng_pos(fgp0, extra_char)
-    #print(hand_pos)
     print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
-    #print(pos_inx)
-
+    if hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'UP':
+        print("Н")
+    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
+        print("Р")
+    elif hand_pos == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
+        print('И')
+    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'FISTED':
+        print('К')
 
 
 def ident_thumb_pos(finger_pos, extra_char):
