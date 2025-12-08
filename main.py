@@ -54,27 +54,53 @@ def identify_sign(finger_pos, extra_char):
         fgp0 = None
     hand_pos = ident_hand_pos(fgp0, extra_char)
     pos_thumb = ident_thumb_pos(fgp0, extra_char)
+    print(pos_thumb)
     pos_inx = ident_inx_fng_pos(fgp0, extra_char)
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
     pos_lil = ident_lil_fng_pos(fgp0, extra_char)
-    print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
+    #print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
     if hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'UP':
-        print("Н")
+        return "Н"
     elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
-        print("Р")
+        return "Р"
     elif hand_pos == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
-        print('И')
+        return 'И'
     elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'FISTED':
-        print('К')
+        return 'К'
     elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP':
-        print('Ы')
+        return 'Ы'
     elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'UP' and pos_lil == 'FISTED':
-        print('Ш')
+        return 'Ш'
 
 
 def ident_thumb_pos(finger_pos, extra_char):
-    pass
+    if finger_pos is not None:
+        pos0x = finger_pos.landmark[0].x * WIDTH
+        pos0y = finger_pos.landmark[0].y * HEIGHT
+        pos0z = finger_pos.landmark[0].z * 1000
+        pos1x = finger_pos.landmark[1].x * WIDTH
+        pos1y = finger_pos.landmark[1].y * HEIGHT
+        pos1z = finger_pos.landmark[1].z * 1000
+        pos2x = finger_pos.landmark[2].x * WIDTH
+        pos2y = finger_pos.landmark[2].y * HEIGHT
+        pos2z = finger_pos.landmark[2].z * 1000
+        pos3x = finger_pos.landmark[3].x * WIDTH
+        pos3y = finger_pos.landmark[3].y * HEIGHT
+        pos3z = finger_pos.landmark[3].z * 1000
+        pos4x = finger_pos.landmark[4].x * WIDTH
+        pos4y = finger_pos.landmark[4].y * HEIGHT
+        pos4z = finger_pos.landmark[4].z * 1000
+        print((pos0x, pos0y),(pos1x, pos1y), (pos2x, pos2y), (pos3x, pos3y), (pos4x, pos4y))
+        if pos0y - pos1y >= 10 and pos1y - pos2y >= 10 and pos2y - pos3y >= 10 and pos3y - pos4y >= 7.5 and 100 >= abs(pos0x - pos1x) >= 0 and 45 >= abs(pos1x - pos2x) >= 0 and 25 >= abs(pos2x - pos3x) >= 0 and 25 >= abs(pos3x - pos4x) >= 0:
+            return 'UP'
+        else:
+            print(pos0y - pos1y >= 10, pos1y - pos2y >= 10, pos2y - pos3y >= 10, pos3y - pos4y >= 7.5, 100 >= abs(
+                pos0x - pos1x) >= 0, 45 >= abs(pos1x - pos2x) >= 0, 25 >= abs(pos2x - pos3x) >= 0, 25 >= abs(
+                pos3x - pos4x) >= 0)
+
+    else:
+        return "NONE"
 
 def ident_inx_fng_pos(finger_pos, extra_char):
     if finger_pos is not None:
@@ -115,7 +141,6 @@ def ident_mid_fng_pos(finger_pos, extra_char):
         pos12x = finger_pos.landmark[12].x * WIDTH
         pos12y = finger_pos.landmark[12].y * HEIGHT
         pos12z = finger_pos.landmark[12].z * 1000
-        print(pos9y, pos10y, pos11y, pos12y)
         if pos9y - pos10y >= 3 and pos11y - pos10y >= 10 and abs(pos11y - pos12y) >= 0.25:
             return 'FISTED'
         if pos10y - pos9y >= 10 and pos11y - pos10y >= 10 and pos12y - pos11y >= 10:
