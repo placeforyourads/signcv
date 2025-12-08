@@ -67,6 +67,10 @@ def identify_sign(finger_pos, extra_char):
         print('И')
     elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'FISTED':
         print('К')
+    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP':
+        print('Ы')
+    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'UP' and pos_lil == 'FISTED':
+        print('Ш')
 
 
 def ident_thumb_pos(finger_pos, extra_char):
