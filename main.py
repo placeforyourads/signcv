@@ -53,25 +53,30 @@ def identify_sign(finger_pos, extra_char):
     except Exception:
         fgp0 = None
     hand_pos = ident_hand_pos(fgp0, extra_char)
-    pos_thumb = ident_thumb_pos(fgp0, extra_char)
-    print(pos_thumb)
+    #extra_char = [extra_char] + [hand_pos]
+    pos_thumb = ident_thumb_pos(fgp0, hand_pos)
+    #print(pos_thumb)
     pos_inx = ident_inx_fng_pos(fgp0, extra_char)
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
     pos_lil = ident_lil_fng_pos(fgp0, extra_char)
     #print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
-    if hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'UP':
+    if hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'UP':
         return "Н"
-    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
         return "Р"
-    elif hand_pos == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
         return 'И'
-    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'FISTED':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'FISTED' and pos_thumb == 'UP':
         return 'К'
-    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP' and pos_thumb == 'SIDED':
         return 'Ы'
-    elif hand_pos == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'UP' and pos_lil == 'FISTED':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'UP' and pos_lil == 'FISTED':
         return 'Ш'
+    elif hand_pos[0] == 'Opened' and pos_thumb == "UP" and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'UP' and pos_lil == 'UP':
+        return 'В'
+    elif hand_pos[0] == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP' and pos_thumb == 'SIDED':
+        return 'У'
 
 
 def ident_thumb_pos(finger_pos, extra_char):
@@ -91,13 +96,22 @@ def ident_thumb_pos(finger_pos, extra_char):
         pos4x = finger_pos.landmark[4].x * WIDTH
         pos4y = finger_pos.landmark[4].y * HEIGHT
         pos4z = finger_pos.landmark[4].z * 1000
-        print((pos0x, pos0y),(pos1x, pos1y), (pos2x, pos2y), (pos3x, pos3y), (pos4x, pos4y))
-        if pos0y - pos1y >= 10 and pos1y - pos2y >= 10 and pos2y - pos3y >= 10 and pos3y - pos4y >= 7.5 and 100 >= abs(pos0x - pos1x) >= 0 and 45 >= abs(pos1x - pos2x) >= 0 and 25 >= abs(pos2x - pos3x) >= 0 and 25 >= abs(pos3x - pos4x) >= 0:
+        #print((pos0x, pos0y),(pos1x, pos1y), (pos2x, pos2y), (pos3x, pos3y), (pos4x, pos4y))
+        angcoeff0 = (pos1y - pos0y) / (pos1x - pos0x)
+        angcoeff1 = (pos2y - pos1y) / (pos2x - pos1x)
+        angcoeff2 = (pos3y - pos2y) / (pos3x - pos2x)
+        angcoeff3 = (pos4y - pos3y) / (pos4x - pos3x)
+        #print(angcoeff0, angcoeff1, angcoeff2, angcoeff3)
+        if 'Right' in extra_char[1] and extra_char[0] == 'Opened' and 0 <= angcoeff0 <= 2 and 0<=angcoeff1<=2 and 0<=angcoeff2<=2.25 and -0.25 <= angcoeff3 <= 1.5:
+            return 'SIDED'
+        elif 'Left' in extra_char[1] and extra_char[0] == 'Opened' and -0 >= angcoeff0 >= -2 and -0 >= angcoeff1 >= -2 and -0 >= angcoeff2 >= -2.25 and 0.25 >= angcoeff3 >= -1.5:
+            return 'SIDED'
+        elif pos1y - pos2y >= 10 and pos2y - pos3y >= 10 and pos3y - pos4y >= 7.5 and 25 >= abs(pos2x - pos3x) >= 0 and 25 >= abs(pos3x - pos4x) >= 0:
             return 'UP'
-        else:
-            print(pos0y - pos1y >= 10, pos1y - pos2y >= 10, pos2y - pos3y >= 10, pos3y - pos4y >= 7.5, 100 >= abs(
-                pos0x - pos1x) >= 0, 45 >= abs(pos1x - pos2x) >= 0, 25 >= abs(pos2x - pos3x) >= 0, 25 >= abs(
-                pos3x - pos4x) >= 0)
+        else:pass
+            #print(pos1y - pos2y >= 10, pos2y - pos3y >= 10, pos3y - pos4y >= 7.5, 45 >= abs(pos1x - pos2x) >= 0, 25 >= abs(pos2x - pos3x) >= 0, 25 >= abs(
+            #    pos3x - pos4x) >= 0)
+            #трекер вытянутого пальца через угловые коэффициенты
 
     else:
         return "NONE"
@@ -217,9 +231,9 @@ def ident_hand_pos(finger_pos, extra_char):
         if abs(finger_pos.landmark[5].x-finger_pos.landmark[17].x)*WIDTH <= 36:
             side = "Sided"
     try:
-        return side
+        return [side, arm]
     except Exception:
-        return 'Undefined'
+        return ['Undefined', "None"]
 
 
 while cap.isOpened():
@@ -234,6 +248,7 @@ while cap.isOpened():
         try:mpdr.draw_landmarks(flippedRGB, results.multi_hand_landmarks[1], mph.HAND_CONNECTIONS)
         except Exception:pass
     sign = identify_sign(results.multi_hand_landmarks, results.multi_handedness)
+    print(sign)
     res_image = cv2.cvtColor(flippedRGB, cv2.COLOR_RGB2BGR)
     cv2.imshow("Hands", res_image)
 hands.close()
