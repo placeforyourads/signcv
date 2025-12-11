@@ -78,10 +78,12 @@ def identify_sign(finger_pos, extra_char):
         return 'В'
     elif hand_pos[0] == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP' and pos_thumb == 'SIDED':
         return 'У'
-    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN' and pos_lil != "DOWN":
         return Checker.m_t(fgp0)
-    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN':
+    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
         return Checker.l_p(fgp0)
+    elif hand_pos[0] == 'Opened' and pos_thumb != "DOWN" and pos_inx == 'DOWN' and pos_mid != 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
+        return 'Г'
 
 
 def ident_thumb_pos(finger_pos, extra_char):
@@ -113,6 +115,8 @@ def ident_thumb_pos(finger_pos, extra_char):
             return 'SIDED'
         elif pos1y - pos2y >= 10 and pos2y - pos3y >= 10 and pos3y - pos4y >= 7.5 and 25 >= abs(pos2x - pos3x) >= 0 and 25 >= abs(pos3x - pos4x) >= 0:
             return 'UP'
+        elif pos1y - pos0y >= 10 and pos2y - pos1y >= 10 and pos3y - pos2y >= 10 and pos4y - pos3y >= 10:
+            return "DOWN"
         else:return 'NONE'
             #print(pos1y - pos2y >= 10, pos2y - pos3y >= 10, pos3y - pos4y >= 7.5, 45 >= abs(pos1x - pos2x) >= 0, 25 >= abs(pos2x - pos3x) >= 0, 25 >= abs(
             #    pos3x - pos4x) >= 0)
