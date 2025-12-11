@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import mediapipe as mp
+from geometry_classes import Point, Vector, Line
 mph = mp.solutions.hands
 mpdr = mp.solutions.drawing_utils
 hands = mph.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.65)
@@ -13,11 +14,11 @@ def identify_sign(finger_pos, extra_char):
     """Positions:
     a - рука закрыта в сторону, пальцы сжаты, большой палец прижат
     б - рука вверх мизинцем вперёд, большой палец прижат к ладони, указательный палец вверх, средний палец согнут в фаланге вверх, безымянный и мизинец в кулаке
-    в - рука вверх открыта, большой палей прижат к ладони, остальные вверх
+    в - рука вверх открыта, большой палей вбок, остальные вверх
     г - рука вниз закрыта, большой палец в сторону, указательный вверх (вниз), остальные в кулаке
     д - нестатичный
     е - рука вверх-вбок мизинцем вперёд, большой палец вперёд вверх, остальные полусогнуты
-    ж - рука вверх-вбок мизинцем вперёд, пальцы вытянуты
+    ж - рука открыта вверх, пальцы вытянуты
     з - нестатичный
     и - ?
     й - нестатичный
@@ -40,7 +41,7 @@ def identify_sign(finger_pos, extra_char):
     щ - нестатичный
     ъ - нестатичный
     ы - рука вверх закрыта, большой в сторону, указательный и мизинец вверх, остальные в кулаке
-    ь - нестатисный
+    ь - нестатичный
     э - ?
     ю - рука вверх-вбок мизинцем вперёд, мизинец вверх, большой палец вперёд, остальные вытянуты
     я - рука вверх мизинцем вперёд, средний вверх, указательный скрещен, большой к ладони, остальные в кулаке
@@ -60,7 +61,7 @@ def identify_sign(finger_pos, extra_char):
     pos_mid = ident_mid_fng_pos(fgp0, extra_char)
     pos_ring = ident_ring_fng_pos(fgp0, extra_char)
     pos_lil = ident_lil_fng_pos(fgp0, extra_char)
-    #print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
+    print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
     if hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'UP':
         return "Н"
     elif hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'FISTED' and pos_ring == 'UP' and pos_lil == 'UP':
@@ -77,6 +78,10 @@ def identify_sign(finger_pos, extra_char):
         return 'В'
     elif hand_pos[0] == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP' and pos_thumb == 'SIDED':
         return 'У'
+    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN':
+        return Checker.m_t(fgp0)
+    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN':
+        return Checker.l_p(fgp0)
 
 
 def ident_thumb_pos(finger_pos, extra_char):
@@ -108,7 +113,7 @@ def ident_thumb_pos(finger_pos, extra_char):
             return 'SIDED'
         elif pos1y - pos2y >= 10 and pos2y - pos3y >= 10 and pos3y - pos4y >= 7.5 and 25 >= abs(pos2x - pos3x) >= 0 and 25 >= abs(pos3x - pos4x) >= 0:
             return 'UP'
-        else:pass
+        else:return 'NONE'
             #print(pos1y - pos2y >= 10, pos2y - pos3y >= 10, pos3y - pos4y >= 7.5, 45 >= abs(pos1x - pos2x) >= 0, 25 >= abs(pos2x - pos3x) >= 0, 25 >= abs(
             #    pos3x - pos4x) >= 0)
             #трекер вытянутого пальца через угловые коэффициенты
@@ -130,7 +135,10 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         pos8x = finger_pos.landmark[8].x * WIDTH
         pos8y = finger_pos.landmark[8].y * HEIGHT
         pos8z = finger_pos.landmark[8].z * 1000
-        if pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
+        print(pos5y, pos6y, pos7y, pos8y)
+        if False:
+            return 'HALF_BENT'
+        elif pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
             return 'FISTED'
         if pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
             return "DOWN"
@@ -235,6 +243,30 @@ def ident_hand_pos(finger_pos, extra_char):
     except Exception:
         return ['Undefined', "None"]
 
+class Checker:
+    @classmethod
+    def l_p(cls, finger_pos):
+        vt_mid_fn = Vector(False, finger_pos.landmark[9].x, finger_pos.landmark[9].y, finger_pos.landmark[12].x, finger_pos.landmark[12].y)
+        vt_inx_fn = Vector(False, finger_pos.landmark[5].x, finger_pos.landmark[5].y, finger_pos.landmark[8].x, finger_pos.landmark[8].y)
+        angle = vt_mid_fn.angle_between(vt_inx_fn)
+        if angle >= 5.5:
+            return 'Л'
+        else:
+            return "П"
+
+
+    @classmethod
+    def m_t(cls, finger_pos):
+        vt_ring_fn = Vector(False, finger_pos.landmark[13].x, finger_pos.landmark[13].y, finger_pos.landmark[16].x,
+                           finger_pos.landmark[16].y)
+        vt_inx_fn = Vector(False, finger_pos.landmark[5].x, finger_pos.landmark[5].y, finger_pos.landmark[8].x,
+                           finger_pos.landmark[8].y)
+        print(vt_ring_fn.angle_between(vt_inx_fn))
+        angle = vt_ring_fn.angle_between(vt_inx_fn)
+        if angle >= 5.5:
+            return 'М'
+        else:
+            return "Т"
 
 while cap.isOpened():
     ret, frame = cap.read()
