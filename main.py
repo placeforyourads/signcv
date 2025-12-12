@@ -57,10 +57,10 @@ def identify_sign(finger_pos, extra_char):
     #extra_char = [extra_char] + [hand_pos]
     pos_thumb = ident_thumb_pos(fgp0, hand_pos)
     #print(pos_thumb)
-    pos_inx = ident_inx_fng_pos(fgp0, extra_char)
-    pos_mid = ident_mid_fng_pos(fgp0, extra_char)
-    pos_ring = ident_ring_fng_pos(fgp0, extra_char)
-    pos_lil = ident_lil_fng_pos(fgp0, extra_char)
+    pos_inx = ident_inx_fng_pos(fgp0, hand_pos)
+    pos_mid = ident_mid_fng_pos(fgp0, hand_pos)
+    pos_ring = ident_ring_fng_pos(fgp0, hand_pos)
+    pos_lil = ident_lil_fng_pos(fgp0, hand_pos)
     print(hand_pos, pos_thumb, pos_inx, pos_mid, pos_ring, pos_lil)
     if hand_pos[0] == 'Opened' and pos_inx == 'UP' and pos_mid == 'UP' and pos_ring == 'FISTED' and pos_lil == 'UP':
         return "Н"
@@ -78,9 +78,9 @@ def identify_sign(finger_pos, extra_char):
         return 'В'
     elif hand_pos[0] == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP' and pos_thumb == 'SIDED':
         return 'У'
-    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN' and pos_lil != "DOWN":
+    elif hand_pos[0] == 'Opened' and pos_thumb == 'DOWN' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN' and pos_lil != "DOWN":
         return Checker.m_t(fgp0)
-    elif hand_pos[0] == 'Opened' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
+    elif hand_pos[0] == 'Opened' and pos_thumb == 'DOWN' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
         return Checker.l_p(fgp0)
     elif hand_pos[0] == 'Opened' and pos_thumb != "DOWN" and pos_inx == 'DOWN' and pos_mid != 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
         return 'Г'
@@ -139,12 +139,18 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         pos8x = finger_pos.landmark[8].x * WIDTH
         pos8y = finger_pos.landmark[8].y * HEIGHT
         pos8z = finger_pos.landmark[8].z * 1000
-        print(pos5y, pos6y, pos7y, pos8y)
-        if False:
-            return 'HALF_BENT'
-        elif pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
+        #print(pos5x, pos5y, pos6x, pos6y, pos7x, pos7y, pos8x, pos8y)
+        if extra_char[0] == 'Sided':
+            vt_1st_fl = Vector(pos5x, pos5y, pos6x, pos6y)
+            vt_3rd_fl = Vector(pos7x, pos7y, pos8x, pos8y)
+            angle = vt_1st_fl.angle_between(vt_3rd_fl)
+            if angle <= 0.20 or 6.10 <= angle:
+                return 'HALF_BENT'
+        else:
+            print(extra_char)
+        if pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
             return 'FISTED'
-        if pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
+        elif pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
             return "DOWN"
         elif pos7y - pos8y >= 10 and pos6y - pos7y >= 10 and pos5y - pos6y >= 10:
             return 'UP'
