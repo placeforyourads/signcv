@@ -90,6 +90,10 @@ def identify_sign(finger_pos, extra_char):
         return 'О'
     elif hand_pos[0] == 'Sided' and pos_thumb == 'SIDED' and pos_inx == 'HALF_BENT' and pos_mid == ('UP', 'NONE') and pos_ring == 'UP' and pos_lil == 'UP':
         return 'О'
+    elif hand_pos[0] == 'Sided' and pos_thumb == 'SIDED' and pos_inx == 'HALF_BENT' and pos_mid == 'HALF_BENT' and pos_ring == 'HALF_BENT' and pos_lil == 'HALF_BENT':
+        return 'Ж'
+    elif hand_pos[0] == 'Sided' and pos_thumb == 'UP' and pos_inx == 'HALF_BENT' and pos_mid == 'HALF_BENT' and pos_ring == 'HALF_BENT' and pos_lil == 'HALF_BENT':
+        return 'Ф'
 
 
 def ident_thumb_pos(finger_pos, extra_char):
