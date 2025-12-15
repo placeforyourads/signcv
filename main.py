@@ -4,7 +4,7 @@ import mediapipe as mp
 from geometry_classes import Point, Vector, Line
 mph = mp.solutions.hands
 mpdr = mp.solutions.drawing_utils
-hands = mph.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.65)
+hands = mph.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.75)
 cap = cv2.VideoCapture(0)
 WIDTH = 800
 HEIGHT = 600
@@ -142,13 +142,15 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         #print(pos5x, pos5y, pos6x, pos6y, pos7x, pos7y, pos8x, pos8y)
         if extra_char[0] == 'Sided':
             vt_1st_fl = Vector(pos5x, pos5y, pos6x, pos6y)
+            vt_2nd_fl = Vector(pos6x, pos6y, pos7x, pos7y)
             vt_3rd_fl = Vector(pos7x, pos7y, pos8x, pos8y)
-            angle = vt_1st_fl.angle_between(vt_3rd_fl)
-            if angle <= 0.20 or 6.10 <= angle:
+            angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
+            angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
+            angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
+            print(angl1, angl2, angl3)
+            if (angl1 <= 0.15 or 6.25 <= angl1) and (angl2 <= 0.8):
                 return 'HALF_BENT'
-        else:
-            print(extra_char)
-        if pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
+        elif pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
             return 'FISTED'
         elif pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
             return "DOWN"
@@ -237,11 +239,11 @@ def ident_lil_fng_pos(finger_pos, extra_char):
 def ident_hand_pos(finger_pos, extra_char):
     if finger_pos is not None:
         arm = "Left" if "Left" in str(extra_char[0]) else "Right"
-        if arm == "Left" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 36:
+        if arm == "Left" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 40:
             side = 'Closed'
         elif arm == "Left":
             side = "Opened"
-        if arm == "Right" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 36:
+        if arm == "Right" and (finger_pos.landmark[17].x-finger_pos.landmark[5].x)*WIDTH >= 40:
             side = 'Opened'
         elif arm == "Right":
             side = "Closed"
