@@ -153,9 +153,9 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         pos8z = finger_pos.landmark[8].z * 1000
         #print(pos5x, pos5y, pos6x, pos6y, pos7x, pos7y, pos8x, pos8y)
         if extra_char[0] == 'Sided':
-            vt_1st_fl = Vector(pos5x, pos5y, pos6x, pos6y)
-            vt_2nd_fl = Vector(pos6x, pos6y, pos7x, pos7y)
-            vt_3rd_fl = Vector(pos7x, pos7y, pos8x, pos8y)
+            vt_1st_fl = Vector(False, pos5x, pos5y, pos6x, pos6y)
+            vt_2nd_fl = Vector(False, pos6x, pos6y, pos7x, pos7y)
+            vt_3rd_fl = Vector(False, pos7x, pos7y, pos8x, pos8y)
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
@@ -192,9 +192,9 @@ def ident_mid_fng_pos(finger_pos, extra_char):
         pos12y = finger_pos.landmark[12].y * HEIGHT
         pos12z = finger_pos.landmark[12].z * 1000
         if extra_char[0] == 'Sided':
-            vt_1st_fl = Vector(pos9x, pos9y, pos10x, pos10y)
-            vt_2nd_fl = Vector(pos10x, pos10y, pos11x, pos11y)
-            vt_3rd_fl = Vector(pos11x, pos11y, pos12x, pos12y)
+            vt_1st_fl = Vector(False, pos9x, pos9y, pos10x, pos10y)
+            vt_2nd_fl = Vector(False, pos10x, pos10y, pos11x, pos11y)
+            vt_3rd_fl = Vector(False, pos11x, pos11y, pos12x, pos12y)
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
@@ -231,9 +231,9 @@ def ident_ring_fng_pos(finger_pos, extra_char):
         pos16y = finger_pos.landmark[16].y * HEIGHT
         pos16z = finger_pos.landmark[16].z * 1000
         if extra_char[0] == 'Sided':
-            vt_1st_fl = Vector(pos13x, pos13y, pos14x, pos14y)
-            vt_2nd_fl = Vector(pos14x, pos14y, pos15x, pos15y)
-            vt_3rd_fl = Vector(pos15x, pos15y, pos16x, pos16y)
+            vt_1st_fl = Vector(False, pos13x, pos13y, pos14x, pos14y)
+            vt_2nd_fl = Vector(False, pos14x, pos14y, pos15x, pos15y)
+            vt_3rd_fl = Vector(False, pos15x, pos15y, pos16x, pos16y)
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
@@ -268,9 +268,9 @@ def ident_lil_fng_pos(finger_pos, extra_char):
         pos20y = finger_pos.landmark[20].y * HEIGHT
         pos20z = finger_pos.landmark[20].z * 1000
         if extra_char[0] == 'Sided':
-            vt_1st_fl = Vector(pos17x, pos17y, pos18x, pos18y)
-            vt_2nd_fl = Vector(pos18x, pos18y, pos19x, pos19y)
-            vt_3rd_fl = Vector(pos19x, pos19y, pos20x, pos20y)
+            vt_1st_fl = Vector(False, pos17x, pos17y, pos18x, pos18y)
+            vt_2nd_fl = Vector(False, pos18x, pos18y, pos19x, pos19y)
+            vt_3rd_fl = Vector(False, pos19x, pos19y, pos20x, pos20y)
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
@@ -308,8 +308,8 @@ def ident_hand_pos(finger_pos, extra_char):
         pos17x = finger_pos.landmark[17].x * WIDTH
         pos17y = finger_pos.landmark[17].y * HEIGHT
         pos17z = finger_pos.landmark[17].z * 1000
-        vt_inx = Vector(pos0x, pos0y, pos5x, pos5y)
-        vt_lil = Vector(pos0x, pos0y, pos17x, pos17y)
+        vt_inx = Vector(False, pos0x, pos0y, pos5x, pos5y)
+        vt_lil = Vector(False, pos0x, pos0y, pos17x, pos17y)
         angle = vt_inx.angle_between(vt_lil)
         print(angle)
         if arm == 'Right' and (angle<=0.06 or angle >= 6.231):
