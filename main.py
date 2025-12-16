@@ -92,9 +92,9 @@ def identify_sign(finger_pos, extra_char):
         return 'О'
     elif hand_pos[0] == 'Sided' and pos_thumb == 'SIDED' and pos_inx == 'HALF_BENT' and pos_mid == 'HALF_BENT' and pos_ring == 'HALF_BENT' and pos_lil == 'HALF_BENT':
         return 'Ж'
-    elif hand_pos[0] == 'Sided' and pos_thumb == 'UP' and pos_inx == 'HALF_BENT' and pos_mid == 'HALF_BENT' and pos_ring == 'HALF_BENT' and pos_lil == 'HALF_BENT':
+    elif hand_pos[0] == 'Sided' and pos_thumb == 'UP' and pos_inx == 'HALF_BENT' and pos_mid == 'HALF_BENT' and pos_ring == 'HALF_BENT' and pos_lil in ('HALF_BENT', 'NONE'):
         return 'Ф'
-    elif hand_pos[0] == "Sided" and pos_thumb == 'SIDED' and pos_inx == 'HALF_BENT' and pos_mid in ("HALF_BENT", 'NONE') and pos_ring == 'DOWN' and pos_lil == 'DOWN':
+    elif hand_pos[0] == "Sided" and pos_thumb == 'SIDED' and pos_inx == 'HALF_BENT' and pos_mid in ("HALF_BENT", 'NONE') and pos_ring == 'DOWN' and pos_lil in ('DOWN', 'NONE'):
         return 'Ч'
 
 
@@ -139,6 +139,9 @@ def ident_thumb_pos(finger_pos, extra_char):
 
 def ident_inx_fng_pos(finger_pos, extra_char):
     if finger_pos is not None:
+        pos0x = finger_pos.landmark[0].x * WIDTH
+        pos0y = finger_pos.landmark[0].y * HEIGHT
+        pos0z = finger_pos.landmark[0].z * 1000
         pos5x = finger_pos.landmark[5].x * WIDTH
         pos5y = finger_pos.landmark[5].y * HEIGHT
         pos5z = finger_pos.landmark[5].z * 1000
@@ -162,10 +165,18 @@ def ident_inx_fng_pos(finger_pos, extra_char):
             #(angl1, angl2, angl3)
             if (angl1 <= 0.2 or 6.2 <= angl1) and (angl2 <= 0.8 or 6.23 <= angl2):
                 #print(pos5x, pos5y, pos8x, pos8y)
-                if extra_char[1] == 'Right' and abs(pos5y-pos8y) <= 36 and pos5x - pos8x >= 35:
+                '''if extra_char[1] == 'Right' and abs(pos5y-pos8y) <= 36 and pos5x - pos8x >= 35:
                     return 'HALF_BENT'
                 elif extra_char[1] == 'Left' and abs(pos5y-pos8y) <= 36 and pos8x - pos5x >= 35:
+                    return 'HALF_BENT'''
+                vt_bone_fl = Vector(False, pos0x, pos0y, pos5x, pos5y)
+                anglf = vt_bone_fl.angle_between(vt_1st_fl)
+                if 1.1 <= anglf <= 2.5:
                     return 'HALF_BENT'
+                else:
+                    return "NONE"
+            else:
+                return 'CURVED'
         elif pos5y - pos6y >= 3 and pos7y - pos6y >= 10 and abs(pos7y - pos8y) >= 0.25:
             return 'FISTED'
         elif pos6y - pos5y >= 10 and pos7y - pos6y >= 10 and pos8y - pos7y >= 10:
@@ -312,13 +323,13 @@ def ident_hand_pos(finger_pos, extra_char):
         vt_lil = Vector(False, pos0x, pos0y, pos17x, pos17y)
         angle = vt_inx.angle_between(vt_lil)
         print(angle)
-        if arm == 'Right' and (angle<=0.06 or angle >= 6.231):
+        if arm == 'Right' and (angle<=0.35 or angle >= 5.7):
             side = 'Sided'
         elif arm == 'Right' and 3.14 >= angle >= 0.06:
             side = 'Opened'
         elif arm == 'Right' and 3.14 <= angle <= 6.24:
             side = 'Closed'
-        if arm == 'Left' and (angle<=0.06 or angle >= 6.24):
+        if arm == 'Left' and (angle<=0.35 or angle >= 5.7):
             side = 'Sided'
         elif arm == 'Left' and 3.14 >= angle >= 0.06:
             side = 'Closed'
