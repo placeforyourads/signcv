@@ -162,8 +162,8 @@ def ident_inx_fng_pos(finger_pos, extra_char):
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
-            #(angl1, angl2, angl3)
-            if (angl1 <= 0.2 or 6.2 <= angl1) and (angl2 <= 0.8 or 6.23 <= angl2):
+            #print(angl1, angl2, angl3)
+            if (angl1 <= 0.4 or 5.6 <= angl1) and (angl2 <= 0.4 or 6.1 <= angl2) and (angl3 <= 0.4 or 6<=angl3):
                 #print(pos5x, pos5y, pos8x, pos8y)
                 '''if extra_char[1] == 'Right' and abs(pos5y-pos8y) <= 36 and pos5x - pos8x >= 35:
                     return 'HALF_BENT'
@@ -171,7 +171,8 @@ def ident_inx_fng_pos(finger_pos, extra_char):
                     return 'HALF_BENT'''
                 vt_bone_fl = Vector(False, pos0x, pos0y, pos5x, pos5y)
                 anglf = vt_bone_fl.angle_between(vt_1st_fl)
-                if 1.1 <= anglf <= 2.5:
+                print(anglf)
+                if 1.2 <= anglf <= 1.6 or 4.8 <= anglf <= 5.1:
                     return 'HALF_BENT'
                 else:
                     return "NONE"
@@ -210,7 +211,7 @@ def ident_mid_fng_pos(finger_pos, extra_char):
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
             #print(angl1, angl2, angl3)
-            if (angl1 <= 0.15 or 6.25 <= angl1) and (angl2 <= 0.8 or 6.23 <= angl2):
+            if (angl1 <= 0.4 or 5.85 <= angl1) and (angl2 <= 0.4 or 6.1 <= angl2) and (angl3 <= .4 or 6.1 <= angl3):
                 #print(pos9x, pos9y, pos10x, pos10y)
                 if extra_char[1] == 'Right' and abs(pos9y-pos12y) <= 36 and pos9x - pos12x >= 35:
                     return 'HALF_BENT'
@@ -248,7 +249,7 @@ def ident_ring_fng_pos(finger_pos, extra_char):
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
-            if (angl1 <= 0.15 or 6.25 <= angl1) and (angl2 <= 0.8 or 6.23 <= angl2):
+            if (angl1 <= 0.4 or 5.85 <= angl1) and (angl2 <= .4 or 6.1 <= angl2) and (angl3 <=.4 or 6.1 <= angl3):
                 if extra_char[1] == 'Right' and abs(pos13y - pos16y) <= 36 and pos13x - pos16x >= 35:
                     return 'HALF_BENT'
                 elif extra_char[1] == 'Left' and abs(pos13y - pos16y) <= 36 and pos16x - pos13x >= 35:
@@ -285,7 +286,8 @@ def ident_lil_fng_pos(finger_pos, extra_char):
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
-            if (angl1 <= 0.15 or 6.25 <= angl1) and (angl2 <= 0.8 or 6.23 <= angl2):
+            #print(angl1, angl2, angl3)
+            if (angl1 <= 0.4 or 6.1 <= angl1) and (angl2 <= 0.4 or 6.1 <= angl2) and (angl3 <=.4 or 6.1 <= angl3):
                 if extra_char[1] == 'Right' and abs(pos17y-pos20y) <= 36 and pos17x - pos20x >= 35:
                     return 'HALF_BENT'
                 elif extra_char[1] == 'Left' and abs(pos17y-pos20y) <= 36 and pos20x - pos17x >= 35:
@@ -322,7 +324,6 @@ def ident_hand_pos(finger_pos, extra_char):
         vt_inx = Vector(False, pos0x, pos0y, pos5x, pos5y)
         vt_lil = Vector(False, pos0x, pos0y, pos17x, pos17y)
         angle = vt_inx.angle_between(vt_lil)
-        print(angle)
         if arm == 'Right' and (angle<=0.35 or angle >= 5.7):
             side = 'Sided'
         elif arm == 'Right' and 3.14 >= angle >= 0.06:
