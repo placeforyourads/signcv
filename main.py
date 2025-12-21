@@ -184,19 +184,14 @@ def ident_ring_fng_pos(finger_pos, extra_char):
     if finger_pos is not None:
         pos0x = finger_pos.landmark[0].x * WIDTH
         pos0y = finger_pos.landmark[0].y * HEIGHT
-        pos0z = finger_pos.landmark[0].z * 1000
         pos13x = finger_pos.landmark[13].x * WIDTH
         pos13y = finger_pos.landmark[13].y * HEIGHT
-        pos13z = finger_pos.landmark[13].z * 1000
         pos14x = finger_pos.landmark[14].x * WIDTH
         pos14y = finger_pos.landmark[14].y * HEIGHT
-        pos14z = finger_pos.landmark[14].z * 1000
         pos15x = finger_pos.landmark[15].x * WIDTH
         pos15y = finger_pos.landmark[15].y * HEIGHT
-        pos15z = finger_pos.landmark[15].z * 1000
         pos16x = finger_pos.landmark[16].x * WIDTH
         pos16y = finger_pos.landmark[16].y * HEIGHT
-        pos16z = finger_pos.landmark[16].z * 1000
         if extra_char[0] == 'Sided':
             vt_1st_fl = Vector(False, pos13x, pos13y, pos14x, pos14y)
             vt_2nd_fl = Vector(False, pos14x, pos14y, pos15x, pos15y)
@@ -206,9 +201,10 @@ def ident_ring_fng_pos(finger_pos, extra_char):
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
             vt_bone_fl = Vector(False, pos0x, pos0y, pos13x, pos13y)
             anglf = vt_bone_fl.angle_between(vt_1st_fl)
-            print(angl1, angl2, angl3, anglf)
-            if (.75<=angl1 <= 1.35 or 5.11 <= angl1 <= 5.6)  and (angl2 <= 0.65 or 5.75 <= angl2) and (angl3 <= 1.9 or 4.4 <= angl3 <= 5.2):
-                if 0.45 <= anglf <= 1.3 or 5.1 <= anglf <= 6.1:
+            print(anglf, angl1, angl2, angl3)
+            if (angl1 <= .3 or angl1 <= 5.8)  and (angl2 <= .25 or 6.15 <= angl2) and (angl3 <= .3 or 6.12):
+                print('halfbent')
+                if 1.1 <= anglf <= 1.7 or 4.6 <= anglf <= 5:
                     return 'HALF_BENT'
                 else:
                     return "NONE"
@@ -254,7 +250,6 @@ def ident_lil_fng_pos(finger_pos, extra_char):
             angl1 = vt_1st_fl.angle_between(vt_2nd_fl)
             angl2 = vt_2nd_fl.angle_between(vt_3rd_fl)
             angl3 = vt_1st_fl.angle_between(vt_3rd_fl)
-            #print(angl1, angl2, angl3)
             if (angl1 <= 0.4 or 6.1 <= angl1) and (angl2 <= 0.4 or 6.1 <= angl2) and (angl3 <=.4 or 6.1 <= angl3):
                 if extra_char[1] == 'Right' and abs(pos17y-pos20y) <= 36 and pos17x - pos20x >= 35:
                     return 'HALF_BENT'
@@ -276,19 +271,10 @@ def ident_hand_pos(finger_pos, extra_char):
         arm = "Left" if "Left" in str(extra_char[0]) else "Right"
         pos0x = finger_pos.landmark[0].x * WIDTH
         pos0y = finger_pos.landmark[0].y * HEIGHT
-        pos0z = finger_pos.landmark[0].z * 1000
         pos5x = finger_pos.landmark[5].x * WIDTH
         pos5y = finger_pos.landmark[5].y * HEIGHT
-        pos5z = finger_pos.landmark[5].z * 1000
-        pos9x = finger_pos.landmark[9].x * WIDTH
-        pos9y = finger_pos.landmark[9].y * HEIGHT
-        pos9z = finger_pos.landmark[9].z * 1000
-        pos13x = finger_pos.landmark[13].x * WIDTH
-        pos13y = finger_pos.landmark[13].y * HEIGHT
-        pos13z = finger_pos.landmark[13].z * 1000
         pos17x = finger_pos.landmark[17].x * WIDTH
         pos17y = finger_pos.landmark[17].y * HEIGHT
-        pos17z = finger_pos.landmark[17].z * 1000
         vt_inx = Vector(False, pos0x, pos0y, pos5x, pos5y)
         vt_lil = Vector(False, pos0x, pos0y, pos17x, pos17y)
         angle = vt_inx.angle_between(vt_lil)
@@ -315,7 +301,6 @@ class Checker:
         vt_mid_fn = Vector(False, finger_pos.landmark[9].x, finger_pos.landmark[9].y, finger_pos.landmark[12].x, finger_pos.landmark[12].y)
         vt_inx_fn = Vector(False, finger_pos.landmark[5].x, finger_pos.landmark[5].y, finger_pos.landmark[8].x, finger_pos.landmark[8].y)
         angle = vt_mid_fn.angle_between(vt_inx_fn)
-        print(angle)
         if angle >= 5.5 and extra_char[1] == 'Left':
             return 'Л'
         elif 0.24 <= angle <= 0.75 and extra_char[1] == 'Right':
@@ -331,39 +316,45 @@ class Checker:
         vt_inx_fn = Vector(False, finger_pos.landmark[5].x, finger_pos.landmark[5].y, finger_pos.landmark[8].x,
                            finger_pos.landmark[8].y)
         angle = vt_ring_fn.angle_between(vt_inx_fn)
-        print(angle)
         if angle >= 5.5: 
             return 'М'
         else:
             return "Т"
 
 
-def draw_cyrillic_text(frame, text, position):
+def draw_cyrillic_text(frame, text, position, size=30):
     font_path = '3_CodecProVariable-Regular.ttf'
     pil_image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(pil_image)
     try:
-        font = ImageFont.truetype(font_path, 30)
+        font = ImageFont.truetype(font_path, size)
     except:
         font = ImageFont.load_default()
     draw.text(position, text, font=font, fill=(255, 255, 255))
     return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
 
+tutorial = True
 while cap.isOpened():
     ret, frame = cap.read()
     if cv2.waitKey(1) & 0xFF == ord('q') or not ret:
         break
+    if cv2.waitKey(1) & 0xFF == ord('s'):
+        tutorial = not tutorial
     flipped = np.fliplr(frame)
     flippedRGB = cv2.cvtColor(flipped, cv2.COLOR_BGR2RGB)
-    results = hands.process(flippedRGB)
-    if results.multi_hand_landmarks is not None:
-        mpdr.draw_landmarks(flippedRGB, results.multi_hand_landmarks[0], mph.HAND_CONNECTIONS)
-        try:mpdr.draw_landmarks(flippedRGB, results.multi_hand_landmarks[1], mph.HAND_CONNECTIONS)
-        except Exception:pass
-    sign = identify_sign(results.multi_hand_landmarks, results.multi_handedness)
-    print(sign)
-    res_image = cv2.cvtColor(flippedRGB, cv2.COLOR_RGB2BGR)
-    res_image = draw_cyrillic_text(res_image, sign, (50, 50))
-    cv2.imshow("Hands", res_image)
+    if tutorial:
+        res_image = (flippedRGB * 0.4).astype(np.uint8)
+        res_image = draw_cyrillic_text(res_image, "Покажите жест в камеру, и если он корректный,\nто программа его распознает\nЧтобы выйти из гайда, нажмите S", (100, 100), size=22)
+    else:
+        results = hands.process(flippedRGB)
+        sign = identify_sign(results.multi_hand_landmarks, results.multi_handedness)
+        res_image = cv2.cvtColor(flippedRGB, cv2.COLOR_RGB2BGR)
+        if sign == 'Нет жеста' and results.multi_hand_landmarks is not None:
+            res_image = draw_cyrillic_text(res_image, 'Некорректный жест', (50, 50))
+        elif sign == 'Нет жеста' and results.multi_hand_landmarks is None:
+            res_image = draw_cyrillic_text(res_image, 'Покажите жест рукой в камеру', (50, 50))
+        else:
+            res_image = draw_cyrillic_text(res_image, f'Жест: {sign}', (50, 50))
+    cv2.imshow("SignCV", res_image)
 hands.close()
