@@ -12,7 +12,7 @@ HEIGHT = 600
 cap.set(3, WIDTH)
 cap.set(4, HEIGHT)
 def identify_sign(finger_pos, extra_char):
-    """"""
+    """Распознаёт жест"""
     try:
         fgp0 = finger_pos[0]
     except Exception:
@@ -40,9 +40,9 @@ def identify_sign(finger_pos, extra_char):
         return 'В'
     elif hand_pos[0] == 'Opened' and pos_inx == 'FISTED' and pos_mid == 'FISTED' and pos_ring == 'FISTED' and pos_lil == 'UP' and pos_thumb == 'SIDED':
         return 'У'
-    elif hand_pos[0] == 'Closed' and pos_thumb == 'DOWN' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN' and pos_lil != "DOWN":
+    elif hand_pos[0] == 'Closed' and pos_thumb == 'DOWN' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring == 'DOWN' and pos_lil in ("DOWN", 'NONE'):
         return Checker.m_t(fgp0, hand_pos)
-    elif hand_pos[0] == 'Closed' and pos_thumb == 'DOWN' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
+    elif hand_pos[0] == 'Closed' and pos_thumb == 'DOWN' and pos_inx == 'DOWN' and pos_mid == 'DOWN' and pos_ring != 'DOWN' and pos_lil in ("DOWN", "NONE"):
         return Checker.l_p(fgp0, hand_pos)
     elif hand_pos[0] == 'Closed' and pos_thumb != "DOWN" and pos_inx == 'DOWN' and pos_mid != 'DOWN' and pos_ring != 'DOWN' and pos_lil != "DOWN":
         return 'Г'
@@ -63,6 +63,7 @@ def identify_sign(finger_pos, extra_char):
 
 
 def ident_thumb_pos(finger_pos, extra_char):
+    """Распознаёт позицию большого пальца"""
     if finger_pos is not None:
         pos0x = finger_pos.landmark[0].x * WIDTH
         pos0y = finger_pos.landmark[0].y * HEIGHT
@@ -93,6 +94,7 @@ def ident_thumb_pos(finger_pos, extra_char):
         return "NONE"
 
 def ident_inx_fng_pos(finger_pos, extra_char):
+    """Распознаёт позицию указательного пальца"""
     if finger_pos is not None:
         pos0x = finger_pos.landmark[0].x * WIDTH
         pos0y = finger_pos.landmark[0].y * HEIGHT
@@ -137,6 +139,7 @@ def ident_inx_fng_pos(finger_pos, extra_char):
         return "NONE"
 
 def ident_mid_fng_pos(finger_pos, extra_char):
+    """Распознаёт позицию среднего пальца"""
     if finger_pos is not None:
         pos0x = finger_pos.landmark[0].x * WIDTH
         pos0y = finger_pos.landmark[0].y * HEIGHT
@@ -181,6 +184,7 @@ def ident_mid_fng_pos(finger_pos, extra_char):
         return "NONE"
 
 def ident_ring_fng_pos(finger_pos, extra_char):
+    """Распознаёт позицию безымянного пальца"""
     if finger_pos is not None:
         pos0x = finger_pos.landmark[0].x * WIDTH
         pos0y = finger_pos.landmark[0].y * HEIGHT
@@ -227,22 +231,16 @@ def ident_ring_fng_pos(finger_pos, extra_char):
         return "NONE"
 
 def ident_lil_fng_pos(finger_pos, extra_char):
+    """Распознаёт позицию мизинца"""
     if finger_pos is not None:
-        pos0x = finger_pos.landmark[0].x * WIDTH
-        pos0y = finger_pos.landmark[0].y * HEIGHT
-        pos0z = finger_pos.landmark[0].z * 1000
         pos17x = finger_pos.landmark[17].x * WIDTH
         pos17y = finger_pos.landmark[17].y * HEIGHT
-        pos17z = finger_pos.landmark[17].z * 1000
         pos18x = finger_pos.landmark[18].x * WIDTH
         pos18y = finger_pos.landmark[18].y * HEIGHT
-        pos18z = finger_pos.landmark[18].z * 1000
         pos19x = finger_pos.landmark[19].x * WIDTH
         pos19y = finger_pos.landmark[19].y * HEIGHT
-        pos19z = finger_pos.landmark[19].z * 1000
         pos20x = finger_pos.landmark[20].x * WIDTH
         pos20y = finger_pos.landmark[20].y * HEIGHT
-        pos20z = finger_pos.landmark[20].z * 1000
         if extra_char[0] == 'Sided':
             vt_1st_fl = Vector(False, pos17x, pos17y, pos18x, pos18y)
             vt_2nd_fl = Vector(False, pos18x, pos18y, pos19x, pos19y)
@@ -267,6 +265,7 @@ def ident_lil_fng_pos(finger_pos, extra_char):
         return "NONE"
 
 def ident_hand_pos(finger_pos, extra_char):
+    """Распознаёт позицию руки"""
     if finger_pos is not None:
         arm = "Left" if "Left" in str(extra_char[0]) else "Right"
         pos0x = finger_pos.landmark[0].x * WIDTH
@@ -296,8 +295,10 @@ def ident_hand_pos(finger_pos, extra_char):
         return ['Undefined', "None"]
 
 class Checker:
+    """Чекер для спорных ситуаций, которые невозможно отследить исходя из позиций пальцев"""
     @classmethod
     def l_p(cls, finger_pos, extra_char):
+        """Чекер для позиции Л / П"""
         vt_mid_fn = Vector(False, finger_pos.landmark[9].x, finger_pos.landmark[9].y, finger_pos.landmark[12].x, finger_pos.landmark[12].y)
         vt_inx_fn = Vector(False, finger_pos.landmark[5].x, finger_pos.landmark[5].y, finger_pos.landmark[8].x, finger_pos.landmark[8].y)
         angle = vt_mid_fn.angle_between(vt_inx_fn)
@@ -311,12 +312,16 @@ class Checker:
 
     @classmethod
     def m_t(cls, finger_pos, extra_char):
+        """Чекер для позиции М / Т"""
         vt_ring_fn = Vector(False, finger_pos.landmark[13].x, finger_pos.landmark[13].y, finger_pos.landmark[16].x,
                            finger_pos.landmark[16].y)
         vt_inx_fn = Vector(False, finger_pos.landmark[5].x, finger_pos.landmark[5].y, finger_pos.landmark[8].x,
                            finger_pos.landmark[8].y)
         angle = vt_ring_fn.angle_between(vt_inx_fn)
-        if angle >= 5.5: 
+        print(angle)
+        if 6.23 >= angle >= 5.5 and extra_char[1] == 'Left':
+            return 'М'
+        elif 0.24<=angle<=0.75 and extra_char[1] == 'Right':
             return 'М'
         else:
             return "Т"

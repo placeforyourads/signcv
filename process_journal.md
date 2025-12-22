@@ -48,3 +48,6 @@ Process Journal
 
 21.12
 сборка программы
+
+22.12
+расписывание changelog.md
