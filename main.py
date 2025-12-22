@@ -340,21 +340,27 @@ def draw_cyrillic_text(frame, text, position, size=30):
 
 
 tutorial = True
+marks = True
 while cap.isOpened():
     ret, frame = cap.read()
-    if cv2.waitKey(1) & 0xFF == ord('q') or not ret:
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q') or not ret:
         break
-    if cv2.waitKey(1) & 0xFF == ord('s'):
+    if key == ord('s'):
         tutorial = not tutorial
+    if key == ord('l'):
+        marks = not marks
     flipped = np.fliplr(frame)
     flippedRGB = cv2.cvtColor(flipped, cv2.COLOR_BGR2RGB)
     if tutorial:
         res_image = (flippedRGB * 0.4).astype(np.uint8)
-        res_image = draw_cyrillic_text(res_image, "Покажите жест в камеру, и если он корректный,\nто программа его распознает\nЧтобы выйти из гайда, нажмите S", (100, 100), size=22)
+        res_image = draw_cyrillic_text(res_image, "Покажите жест в камеру, и если он корректный,\nто программа его распознает\nЧтобы выйти из гайда, нажмите S\nЧтобы показать или скрыть ландмарки руки, нажмите L", (100, 100), size=22)
     else:
         results = hands.process(flippedRGB)
         sign = identify_sign(results.multi_hand_landmarks, results.multi_handedness)
         res_image = cv2.cvtColor(flippedRGB, cv2.COLOR_RGB2BGR)
+        if marks and results.multi_hand_landmarks is not None:
+            mpdr.draw_landmarks(res_image, results.multi_hand_landmarks[0], mph.HAND_CONNECTIONS)
         if sign == 'Нет жеста' and results.multi_hand_landmarks is not None:
             res_image = draw_cyrillic_text(res_image, 'Некорректный жест', (50, 50))
         elif sign == 'Нет жеста' and results.multi_hand_landmarks is None:
