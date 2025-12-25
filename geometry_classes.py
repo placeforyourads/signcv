@@ -218,31 +218,6 @@ class Line:
                     return Point(False, x, y)
                 else:
                     return None
-        '''elif type(ln) == Segment:
-            if self.has(ln.point1) and self.has(ln.point2):
-                return True
-            else:
-                lnsg = ln.line
-                lnintercept = self.intercept(lnsg)
-                if type(lnintercept) == bool:
-                    return True
-                elif isclose(self.a, ln.a, abs_tol = epsilon) and isclose(self.b, ln.b, abs_tol = epsilon):
-                    if isclose(self.c, ln.c, abs_tol = epsilon):
-                        return True
-                    else:
-                        return None
-                else:
-                    dl = self.a*ln.b - self.b * ln.a
-                    if dl:
-                        x = (self.b * ln.c - self.c * ln.b) / (self.a * ln.b - self.b * ln.a)
-                        y = (ln.a * self.c - self.a * ln.c) / (self.a * ln.b - self.b * ln.a)
-                        pt = Point(False, x, y)
-                    else:
-                        return None
-                    if ln.has(pt):
-                        return pt
-                    else:
-                        return None'''
 
     def __str__(self):
         return f"{self.a}x+{self.b}y+{self.c}=0"
